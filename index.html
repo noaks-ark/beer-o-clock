@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍺 BEER O'CLOCK 🍺</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
+    background: linear-gradient(180deg, #1a2a6c 0%, #2a4a8c 50%, #16213e 100%);
+    color: #fff;
+    user-select: none;
+  }
+
+  /* ---------- Countdown view ---------- */
+  #countdown-view {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  #label {
+    font-size: clamp(1.2rem, 4vw, 2.5rem);
+    letter-spacing: 0.3em;
+    color: #ffd166;
+    text-shadow: 0 0 20px rgba(255, 209, 102, 0.6);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  #timer {
+    font-size: clamp(4rem, 18vw, 14rem);
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.05em;
+    background: linear-gradient(180deg, #fff 20%, #ffd166 60%, #f7931e 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 6px 0 rgba(0,0,0,0.35)) drop-shadow(0 0 30px rgba(255,209,102,0.35));
+    animation: bob 3s ease-in-out infinite;
+  }
+
+  #timer.urgent { animation: shake 0.3s linear infinite; }
+
+  #sub {
+    font-size: clamp(1rem, 3vw, 1.8rem);
+    opacity: 0.9;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.85; }
+    50% { transform: scale(1.08); opacity: 1; }
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-12px) rotate(1deg); }
+  }
+  @keyframes shake {
+    0% { transform: translate(0,0) rotate(0deg); }
+    25% { transform: translate(4px,-3px) rotate(1deg); }
+    50% { transform: translate(-3px,4px) rotate(-1deg); }
+    75% { transform: translate(3px,3px) rotate(1deg); }
+    100% { transform: translate(0,0) rotate(0deg); }
+  }
+
+  /* SVG beer mug filling up */
+  #mug-wrap {
+    animation: bob 2.5s ease-in-out infinite;
+    animation-delay: 0.5s;
+  }
+  #beer-fill { transition: height 1s linear, y 1s linear; }
+  .bubble { animation: bubbleUp 3s linear infinite; }
+  .bubble:nth-child(2) { animation-delay: 1s; }
+  .bubble:nth-child(3) { animation-delay: 2s; }
+  .bubble:nth-child(4) { animation-delay: 0.5s; }
+  @keyframes bubbleUp {
+    0% { transform: translateY(0); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translateY(-70px); opacity: 0; }
+  }
+
+  /* Floating background emojis (pre-party) */
+  .floater {
+    position: fixed;
+    font-size: 2.5rem;
+    z-index: 1;
+    opacity: 0.35;
+    animation: floatAround linear infinite;
+    pointer-events: none;
+  }
+  @keyframes floatAround {
+    0%   { transform: translateY(105vh) rotate(0deg); }
+    100% { transform: translateY(-10vh) rotate(360deg); }
+  }
+
+  /* ---------- PARTY MODE ---------- */
+  #party-view {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    overflow: hidden;
+    background: linear-gradient(45deg, #f7931e, #ffd166, #f75c4c, #ffd166, #f7931e);
+    background-size: 400% 400%;
+    animation: discoBg 3s ease infinite;
+  }
+  body.party #party-view { display: block; }
+  body.party #countdown-view { display: none; }
+
+  @keyframes discoBg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  #beer-time-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(3rem, 14vw, 11rem);
+    font-weight: 900;
+    text-align: center;
+    white-space: nowrap;
+    color: #fff;
+    -webkit-text-stroke: 3px #7a3b00;
+    text-shadow: 0 8px 0 #7a3b00, 0 0 60px rgba(255,255,255,0.8);
+    animation: zoomBoom 1s ease-in-out infinite;
+    z-index: 20;
+  }
+  @keyframes zoomBoom {
+    0%, 100% { transform: translate(-50%, -50%) scale(0.8) rotate(-4deg); }
+    50% { transform: translate(-50%, -50%) scale(1.25) rotate(4deg); }
+  }
+
+  #cheers-sub {
+    position: absolute;
+    top: 72%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: clamp(1.2rem, 4vw, 2.5rem);
+    color: #7a3b00;
+    z-index: 20;
+    animation: pulse 0.8s ease-in-out infinite;
+    white-space: nowrap;
+  }
+
+  .flying-beer {
+    position: absolute;
+    font-size: 4rem;
+    z-index: 15;
+    animation: flyAcross linear infinite;
+    pointer-events: none;
+  }
+  @keyframes flyAcross {
+    0%   { transform: translateX(-15vw) rotate(0deg); }
+    100% { transform: translateX(115vw) rotate(720deg); }
+  }
+  .flying-beer.reverse { animation-name: flyAcrossReverse; }
+  @keyframes flyAcrossReverse {
+    0%   { transform: translateX(115vw) rotate(0deg) scaleX(-1); }
+    100% { transform: translateX(-15vw) rotate(-720deg) scaleX(-1); }
+  }
+
+  .confetti {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    top: -20px;
+    z-index: 12;
+    animation: confettiFall linear infinite;
+    pointer-events: none;
+  }
+  @keyframes confettiFall {
+    0%   { transform: translateY(-5vh) rotate(0deg); }
+    100% { transform: translateY(110vh) rotate(900deg); }
+  }
+
+  .bouncer {
+    position: absolute;
+    bottom: 0;
+    font-size: 3.5rem;
+    z-index: 14;
+    animation: bounceUp ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes bounceUp {
+    0%, 100% { transform: translateY(10px) rotate(-10deg); }
+    50% { transform: translateY(-40vh) rotate(10deg); }
+  }
+
+  #skip-hint {
+    position: fixed;
+    bottom: 10px;
+    right: 14px;
+    font-size: 0.75rem;
+    font-family: monospace;
+    opacity: 0.4;
+    z-index: 30;
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============ COUNTDOWN ============ -->
+  <div id="countdown-view">
+    <div id="label">🍻 COUNTDOWN TO BEER TIME 🍻</div>
+    <div id="timer">--:--:--</div>
+
+    <!-- Beer mug SVG that fills up as 15:00 approaches -->
+    <div id="mug-wrap">
+      <svg width="130" height="150" viewBox="0 0 130 150">
+        <!-- handle -->
+        <path d="M95 45 Q125 45 125 75 Q125 105 95 105" fill="none" stroke="#ffd166" stroke-width="9" stroke-linecap="round"/>
+        <!-- glass -->
+        <rect x="20" y="30" width="80" height="105" rx="10" fill="rgba(255,255,255,0.12)" stroke="#ffd166" stroke-width="4"/>
+        <!-- beer fill (height animated by JS) -->
+        <clipPath id="glassClip"><rect x="24" y="34" width="72" height="97" rx="7"/></clipPath>
+        <g clip-path="url(#glassClip)">
+          <rect id="beer-fill" x="24" y="131" width="72" height="0" fill="#f7931e"/>
+          <circle class="bubble" cx="45" cy="125" r="4" fill="#ffd166" opacity="0.8"/>
+          <circle class="bubble" cx="65" cy="128" r="3" fill="#fff" opacity="0.6"/>
+          <circle class="bubble" cx="82" cy="126" r="5" fill="#ffd166" opacity="0.7"/>
+          <circle class="bubble" cx="55" cy="130" r="3" fill="#fff" opacity="0.7"/>
+        </g>
+        <!-- foam (appears when nearly full) -->
+        <g id="foam" opacity="0">
+          <circle cx="35" cy="30" r="11" fill="#fff"/>
+          <circle cx="55" cy="25" r="13" fill="#fff"/>
+          <circle cx="76" cy="28" r="12" fill="#fff"/>
+          <circle cx="92" cy="32" r="9" fill="#fff"/>
+        </g>
+      </svg>
+    </div>
+
+    <div id="sub">Hold on... the fridge is doing its best 🧊</div>
+  </div>
+
+  <!-- ============ PARTY ============ -->
+  <div id="party-view">
+    <div id="beer-time-text">🍺 BEER TIME 🍺</div>
+    <div id="cheers-sub">SKÅL! CHEERS! PROST! 🎉</div>
+  </div>
+
+  <div id="skip-hint">?test=10 → 10s demo countdown</div>
+
+<script>
+(() => {
+  const TARGET_HOUR = 15;
+  const timerEl = document.getElementById('timer');
+  const subEl = document.getElementById('sub');
+  const beerFill = document.getElementById('beer-fill');
+  const foam = document.getElementById('foam');
+
+  // ?test=10 gives a 10-second countdown for demo purposes
+  const testSecs = new URLSearchParams(location.search).get('test');
+  let target;
+  if (testSecs) {
+    target = Date.now() + parseInt(testSecs, 10) * 1000;
+  } else {
+    const t = new Date();
+    t.setHours(TARGET_HOUR, 0, 0, 0);
+    target = t.getTime();
+  }
+
+  const subLines = [
+    'Hold on... the fridge is doing its best 🧊',
+    'Glasses are being polished 🥂',
+    'The foam is foaming 🫧',
+    'Hydrate now, celebrate later 💧',
+    'Somewhere, a keg is getting nervous 🛢️',
+    'Beer thirty is almost upon us ⏰',
+  ];
+  let subIdx = 0;
+  setInterval(() => {
+    subIdx = (subIdx + 1) % subLines.length;
+    subEl.textContent = subLines[subIdx];
+  }, 5000);
+
+  // Pre-party floating emojis
+  const preEmojis = ['🍺', '🍻', '⏰', '🥨', '🧀', '🥜', '✨'];
+  for (let i = 0; i < 14; i++) {
+    const el = document.createElement('div');
+    el.className = 'floater';
+    el.textContent = preEmojis[i % preEmojis.length];
+    el.style.left = Math.random() * 95 + 'vw';
+    el.style.animationDuration = (8 + Math.random() * 12) + 's';
+    el.style.animationDelay = (-Math.random() * 15) + 's';
+    document.body.appendChild(el);
+  }
+
+  const pad = n => String(n).padStart(2, '0');
+  // How long the "day" of waiting is, for the mug fill (from 9:00 → 15:00, or test duration)
+  const fillWindow = testSecs ? parseInt(testSecs, 10) * 1000 : 6 * 3600 * 1000;
+  let partyStarted = false;
+
+  function tick() {
+    const diff = target - Date.now();
+
+    if (diff <= 0) {
+      if (!partyStarted) startParty();
+      return;
+    }
+
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    timerEl.textContent = h > 0 ? `${pad(h)}:${pad(m)}:${pad(s)}` : `${pad(m)}:${pad(s)}`;
+
+    // Final minute = urgency shake
+    timerEl.classList.toggle('urgent', diff < 60000);
+
+    // Fill the mug: 0% at start of window → 100% at 15:00
+    const frac = Math.min(1, Math.max(0.05, 1 - diff / fillWindow));
+    const maxH = 97;
+    const fillH = Math.round(maxH * frac);
+    beerFill.setAttribute('height', fillH);
+    beerFill.setAttribute('y', 131 - fillH);
+    foam.setAttribute('opacity', frac > 0.9 ? (frac - 0.9) * 10 : 0);
+  }
+
+  function startParty() {
+    partyStarted = true;
+    document.body.classList.add('party');
+    document.title = '🍻🍻🍻 BEER TIME 🍻🍻🍻';
+    const party = document.getElementById('party-view');
+
+    // Flying beer mugs across the screen
+    const flyers = ['🍺', '🍻', '🍺', '🍻', '🥂', '🍺', '🍾', '🍺'];
+    for (let i = 0; i < 16; i++) {
+      const el = document.createElement('div');
+      el.className = 'flying-beer' + (i % 2 ? ' reverse' : '');
+      el.textContent = flyers[i % flyers.length];
+      el.style.top = Math.random() * 90 + 'vh';
+      el.style.fontSize = (2.5 + Math.random() * 3.5) + 'rem';
+      el.style.animationDuration = (2.5 + Math.random() * 4) + 's';
+      el.style.animationDelay = (-Math.random() * 5) + 's';
+      party.appendChild(el);
+    }
+
+    // Bouncing party guests at the bottom
+    const bouncers = ['🕺', '💃', '🎉', '🥳', '🦆', '🍕', '🎸', '🪩'];
+    bouncers.forEach((e, i) => {
+      const el = document.createElement('div');
+      el.className = 'bouncer';
+      el.textContent = e;
+      el.style.left = (5 + i * 12) + 'vw';
+      el.style.animationDuration = (1.2 + Math.random() * 1.2) + 's';
+      el.style.animationDelay = (-Math.random() * 2) + 's';
+      party.appendChild(el);
+    });
+
+    // Confetti rain
+    const colors = ['#fff', '#f75c4c', '#1a2a6c', '#2ec4b6', '#ffd166', '#9b5de5'];
+    for (let i = 0; i < 80; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.background = colors[i % colors.length];
+      el.style.animationDuration = (2 + Math.random() * 4) + 's';
+      el.style.animationDelay = (-Math.random() * 6) + 's';
+      if (i % 3 === 0) el.style.borderRadius = '50%';
+      party.appendChild(el);
+    }
+  }
+
+  // Already past 15:00? Straight to the party.
+  tick();
+  setInterval(tick, 250);
+})();
+</script>
+</body>
+</html>
