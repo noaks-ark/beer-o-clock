@@ -11,7 +11,7 @@
     height: 100%;
     overflow: hidden;
     font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif;
-    background: linear-gradient(180deg, #1a2a6c 0%, #2a4a8c 50%, #16213e 100%);
+    background: linear-gradient(180deg, #201a5c 0%, #2a3a8c 50%, #120e3e 100%);
     color: #fff;
     user-select: none;
   }
@@ -102,24 +102,349 @@
     100% { transform: translateY(-10vh) rotate(360deg); }
   }
 
-  /* ---------- PARTY MODE ---------- */
+  /* ---------- Countdown warm-up club ---------- */
+  #cd-club { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+
+  .spotlight {
+    position: absolute;
+    top: -5vh;
+    width: 16vw;
+    height: 130vh;
+    transform-origin: top center;
+    mix-blend-mode: screen;
+    clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
+    animation: sweep 7s ease-in-out infinite alternate;
+  }
+  .sl-left {
+    left: 8vw;
+    background: linear-gradient(180deg, rgba(255,43,214,0.45), transparent 75%);
+  }
+  .sl-right {
+    right: 8vw;
+    background: linear-gradient(180deg, rgba(43,217,255,0.45), transparent 75%);
+    animation-duration: 8.5s;
+    animation-delay: -3s;
+  }
+  @keyframes sweep {
+    from { transform: rotate(-24deg); }
+    to   { transform: rotate(24deg); }
+  }
+
+  /* Hanging disco ball (shared rig style, sized per view) */
+  .ball-pos {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .ball-rig {
+    transform-origin: top center;
+    animation: ballSwing 5s ease-in-out infinite;
+    position: relative;
+  }
+  @keyframes ballSwing {
+    0%, 100% { transform: rotate(-7deg); }
+    50%      { transform: rotate(7deg); }
+  }
+  .ball-string { width: 3px; height: 9vh; background: rgba(255,255,255,0.5); margin: 0 auto; }
+  .ball-emoji { font-size: 4rem; text-align: center; line-height: 1; position: relative; z-index: 1; }
+  .ball-rays {
+    position: absolute;
+    top: 9vh; left: 50%;
+    width: 60vmin; height: 60vmin;
+    border-radius: 50%;
+    background: repeating-conic-gradient(rgba(255,255,255,0.10) 0deg 6deg, transparent 6deg 40deg);
+    animation: raysSpin 14s linear infinite;
+  }
+  @keyframes raysSpin {
+    from { transform: translate(-50%, -42%) rotate(0deg); }
+    to   { transform: translate(-50%, -42%) rotate(360deg); }
+  }
+  .glint {
+    position: absolute;
+    font-size: 0.9rem;
+    z-index: 2;
+    animation: twinkle 1.6s ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.1; transform: scale(0.6); }
+    50%      { opacity: 1;   transform: scale(1.2); }
+  }
+
+  .warmup {
+    position: fixed;
+    bottom: 2vh;
+    font-size: 2.4rem;
+    opacity: 0.55;
+    z-index: 1;
+    pointer-events: none;
+    animation: warmupSway 2.6s ease-in-out infinite;
+  }
+  @keyframes warmupSway {
+    0%, 100% { transform: translateY(0) rotate(-10deg); }
+    50%      { transform: translateY(-14px) rotate(10deg); }
+  }
+
+  /* ---------- PARTY MODE: THE CLUB ---------- */
   #party-view {
     display: none;
     position: fixed;
     inset: 0;
     z-index: 10;
     overflow: hidden;
-    background: linear-gradient(45deg, #f7931e, #ffd166, #f75c4c, #ffd166, #f7931e);
-    background-size: 400% 400%;
-    animation: discoBg 3s ease infinite;
+    background: linear-gradient(180deg, #16002b 0%, #2a0a4d 55%, #0b0018 100%);
+    animation: bassThump 0.94s ease-in-out infinite;
   }
   body.party #party-view { display: block; }
   body.party #countdown-view { display: none; }
 
-  @keyframes discoBg {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  @keyframes bassThump {
+    0%, 100% { transform: scale(1); }
+    30%      { transform: scale(1.012); }
+  }
+
+  /* Pulsing color wash over the whole club */
+  #club-wash {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    background:
+      radial-gradient(ellipse at 50% 0%,  rgba(255,43,214,0.35), transparent 60%),
+      radial-gradient(ellipse at 20% 100%, rgba(43,217,255,0.30), transparent 55%),
+      radial-gradient(ellipse at 80% 100%, rgba(155,93,229,0.30), transparent 55%);
+    animation: washPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes washPulse {
+    0%, 100% { opacity: 0.55; filter: hue-rotate(0deg); }
+    50%      { opacity: 1;    filter: hue-rotate(120deg); }
+  }
+
+  /* Perspective checkerboard dance floor */
+  #dance-floor {
+    position: absolute;
+    left: -20vw; right: -20vw; bottom: 0;
+    height: 34vh;
+    z-index: 1;
+    background: repeating-conic-gradient(#ff2bd6 0% 25%, #2bd9ff 25% 50%) 0 0 / 90px 90px;
+    transform: perspective(600px) rotateX(55deg);
+    transform-origin: bottom;
+    opacity: 0.85;
+    animation: floorPulse 1.4s ease-in-out infinite;
+  }
+  @keyframes floorPulse {
+    0%, 100% { filter: hue-rotate(0deg) brightness(0.8); }
+    50%      { filter: hue-rotate(180deg) brightness(1.25); }
+  }
+
+  /* Laser beams */
+  .laser {
+    position: absolute;
+    top: -2vh;
+    width: 160vw;
+    height: 3px;
+    z-index: 3;
+    opacity: 0.8;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    animation: laserSweep ease-in-out infinite alternate;
+  }
+  .laser.from-left  { left: -10vw; transform-origin: 0 0; }
+  .laser.from-right { right: -10vw; transform-origin: 100% 0; animation-name: laserSweepR; }
+  .l1 { background: linear-gradient(90deg, #ff2bd6, transparent); animation-duration: 2.1s; }
+  .l2 { background: linear-gradient(90deg, #2bd9ff, transparent); animation-duration: 2.9s; animation-delay: -1s; }
+  .l3 { background: linear-gradient(90deg, #7cff4c, transparent); animation-duration: 3.6s; animation-delay: -2s; }
+  .l4 { background: linear-gradient(270deg, #ffd166, transparent); animation-duration: 2.5s; animation-delay: -0.5s; }
+  .l5 { background: linear-gradient(270deg, #9b5de5, transparent); animation-duration: 3.2s; animation-delay: -1.7s; }
+  @keyframes laserSweep {
+    from { transform: rotate(12deg); }
+    to   { transform: rotate(78deg); }
+  }
+  @keyframes laserSweepR {
+    from { transform: rotate(-12deg); }
+    to   { transform: rotate(-78deg); }
+  }
+
+  /* Big party disco ball */
+  #big-ball-pos { z-index: 4; }
+  #big-ball-pos .ball-emoji { font-size: 7rem; }
+  #big-ball-pos .ball-string { height: 7vh; }
+  #big-ball-pos .ball-rig { animation-duration: 3.5s; }
+  #big-ball-pos .ball-rays {
+    top: 7vh;
+    width: 90vmin; height: 90vmin;
+    background: repeating-conic-gradient(rgba(255,255,255,0.16) 0deg 7deg, transparent 7deg 36deg);
+    animation-duration: 8s;
+  }
+
+  /* DJ booth */
+  #dj-booth {
+    position: absolute;
+    bottom: 3vh;
+    left: 50%;
+    z-index: 15;
+    text-align: center;
+    pointer-events: none;
+    animation: djThump 0.47s ease-in-out infinite;
+  }
+  @keyframes djThump {
+    0%, 100% { transform: translateX(-50%) scale(1); }
+    30%      { transform: translateX(-50%) scale(1.05); }
+  }
+  #untz {
+    font-size: clamp(0.8rem, 2vw, 1.2rem);
+    color: #2bd9ff;
+    letter-spacing: 0.4em;
+    text-shadow: 0 0 12px #2bd9ff;
+    margin-bottom: 6px;
+    animation: pulse 0.47s ease-in-out infinite;
+  }
+  #dj {
+    position: relative;
+    font-size: 3.2rem;
+    line-height: 1;
+    animation: headBob 0.47s ease-in-out infinite;
+  }
+  @keyframes headBob {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50%      { transform: translateY(-6px) rotate(3deg); }
+  }
+  #dj-phones {
+    position: absolute;
+    top: -0.35em;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.5rem;
+  }
+  #booth-front {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    margin-top: -6px;
+    background: linear-gradient(180deg, #1c1030, #0d0618);
+    border: 2px solid #ff2bd6;
+    border-radius: 10px;
+    box-shadow: 0 0 18px rgba(255,43,214,0.7);
+  }
+  .deck { font-size: 2rem; animation: spinDeck 1.2s linear infinite; }
+  .deck:last-child { animation-duration: 0.9s; animation-direction: reverse; }
+  @keyframes spinDeck { to { transform: rotate(360deg); } }
+  #dj-name {
+    color: #ffd166;
+    font-size: clamp(0.8rem, 1.6vw, 1.1rem);
+    letter-spacing: 0.15em;
+    text-shadow: 0 0 8px #ffd166;
+    white-space: nowrap;
+  }
+  .speaker {
+    position: absolute;
+    bottom: 0;
+    width: 64px;
+    height: 112px;
+    background: #12081f;
+    border: 2px solid #453a5c;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+  .speaker.left  { left: -92px; }
+  .speaker.right { right: -92px; }
+  .speaker i {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #999 0 18%, #1a1a1a 45%, #3a3a3a 70%);
+    animation: coneThump 0.47s ease-in-out infinite;
+  }
+  .speaker i:first-child { width: 24px; height: 24px; animation-delay: 0.08s; }
+  @keyframes coneThump {
+    0%, 100% { transform: scale(1); }
+    30%      { transform: scale(1.18); }
+  }
+
+  /* Dancing crowd */
+  .dancer { position: absolute; pointer-events: none; }
+  .dancer.back  { bottom: 18vh; font-size: 2.2rem; filter: brightness(0.55); z-index: 12; }
+  .dancer.front { bottom: 2vh;  font-size: 3.6rem; z-index: 14; }
+  @keyframes danceBounce {
+    0%, 100% { transform: translateY(0) rotate(-8deg); }
+    50%      { transform: translateY(-26px) rotate(8deg); }
+  }
+  @keyframes danceSpin {
+    0%, 100% { transform: rotate(-18deg) scale(1); }
+    50%      { transform: rotate(18deg) scale(1.15); }
+  }
+  @keyframes danceJump {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    40%      { transform: translateY(-60px) rotate(180deg); }
+    80%      { transform: translateY(0) rotate(360deg); }
+  }
+  @keyframes danceShuffle {
+    0%, 100% { transform: translateX(-16px) skewX(-6deg); }
+    50%      { transform: translateX(16px) skewX(6deg); }
+  }
+
+  /* Beer raining from the sky */
+  .beer-rain {
+    position: absolute;
+    top: -12vh;
+    z-index: 12;
+    pointer-events: none;
+    animation: beerRain linear infinite;
+  }
+  @keyframes beerRain {
+    0%   { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(130vh) rotate(540deg); }
+  }
+
+  /* Champagne cannons flying in from the sides */
+  .champ-track { position: absolute; z-index: 16; pointer-events: none; }
+  .champ-track.left  { left: 0;  animation: champInL ease-in-out infinite; }
+  .champ-track.right { right: 0; animation: champInR ease-in-out infinite; }
+  @keyframes champInL {
+    0%   { transform: translateX(-45vw); }
+    18%  { transform: translateX(3vw); }
+    82%  { transform: translateX(3vw); }
+    100% { transform: translateX(-45vw); }
+  }
+  @keyframes champInR {
+    0%   { transform: translateX(45vw); }
+    18%  { transform: translateX(-3vw); }
+    82%  { transform: translateX(-3vw); }
+    100% { transform: translateX(45vw); }
+  }
+  .champ-flip { display: block; position: relative; }
+  .champ-track.right .champ-flip { transform: scaleX(-1); }
+  .champ-bottle {
+    display: block;
+    font-size: 5rem;
+    line-height: 1;
+    transform: rotate(45deg);
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));
+  }
+  .champ-spray { position: absolute; top: 8%; left: 82%; }
+  .champ-drop {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #ffd166;
+    opacity: 0;
+    animation: sprayOut 1s ease-out infinite;
+  }
+  .champ-drop.fizz {
+    width: auto; height: auto;
+    background: none;
+    font-size: 1rem;
+    line-height: 1;
+  }
+  @keyframes sprayOut {
+    0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
   }
 
   #beer-time-text {
@@ -134,12 +459,24 @@
     color: #fff;
     -webkit-text-stroke: 3px #7a3b00;
     text-shadow: 0 8px 0 #7a3b00, 0 0 60px rgba(255,255,255,0.8);
-    animation: zoomBoom 1s ease-in-out infinite;
+    animation: hueSpin 5s linear infinite;
     z-index: 20;
   }
-  @keyframes zoomBoom {
-    0%, 100% { transform: translate(-50%, -50%) scale(0.8) rotate(-4deg); }
-    50% { transform: translate(-50%, -50%) scale(1.25) rotate(4deg); }
+  /* nested spans so the sway, the 1080° spin and the hue cycle compose smoothly */
+  .btt-spin, .btt-sway { display: inline-block; }
+  .btt-spin { animation: megaSpin 7s linear infinite; }
+  @keyframes megaSpin {
+    0%, 80% { transform: rotate(0deg); animation-timing-function: ease-in-out; }
+    100%    { transform: rotate(1080deg); }
+  }
+  .btt-sway { animation: swayBoom 2.4s ease-in-out infinite; }
+  @keyframes swayBoom {
+    0%, 100% { transform: rotate(-5deg) scale(0.85); }
+    50%      { transform: rotate(5deg) scale(1.2); }
+  }
+  @keyframes hueSpin {
+    from { filter: hue-rotate(0deg); }
+    to   { filter: hue-rotate(360deg); }
   }
 
   #cheers-sub {
@@ -148,7 +485,8 @@
     left: 50%;
     transform: translateX(-50%);
     font-size: clamp(1.2rem, 4vw, 2.5rem);
-    color: #7a3b00;
+    color: #ffd166;
+    text-shadow: 0 0 16px rgba(255,209,102,0.9), 0 2px 0 #7a3b00;
     z-index: 20;
     animation: pulse 0.8s ease-in-out infinite;
     white-space: nowrap;
@@ -185,19 +523,6 @@
     100% { transform: translateY(110vh) rotate(900deg); }
   }
 
-  .bouncer {
-    position: absolute;
-    bottom: 0;
-    font-size: 3.5rem;
-    z-index: 14;
-    animation: bounceUp ease-in-out infinite;
-    pointer-events: none;
-  }
-  @keyframes bounceUp {
-    0%, 100% { transform: translateY(10px) rotate(-10deg); }
-    50% { transform: translateY(-40vh) rotate(10deg); }
-  }
-
   #skip-hint {
     position: fixed;
     bottom: 10px;
@@ -207,9 +532,34 @@
     opacity: 0.4;
     z-index: 30;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-play-state: paused !important; }
+  }
 </style>
 </head>
 <body>
+
+  <!-- ============ COUNTDOWN WARM-UP CLUB ============ -->
+  <div id="cd-club">
+    <div class="spotlight sl-left"></div>
+    <div class="spotlight sl-right"></div>
+    <div class="ball-pos">
+      <div class="ball-rig">
+        <div class="ball-rays"></div>
+        <div class="ball-string"></div>
+        <div class="ball-emoji">🪩</div>
+        <span class="glint" style="top: 9vh; left: -14px; animation-delay: 0s;">✨</span>
+        <span class="glint" style="top: 10vh; right: -16px; animation-delay: 0.5s;">✨</span>
+        <span class="glint" style="top: calc(9vh + 3.2rem); left: -8px; animation-delay: 1s;">✨</span>
+        <span class="glint" style="top: calc(9vh + 3.5rem); right: -10px; animation-delay: 1.4s;">✨</span>
+      </div>
+    </div>
+    <div class="warmup" style="left: 4vw;">🕺</div>
+    <div class="warmup" style="left: 14vw; animation-delay: -0.8s;">💃</div>
+    <div class="warmup" style="right: 14vw; animation-delay: -1.6s;">🕺</div>
+    <div class="warmup" style="right: 4vw; animation-delay: -0.4s;">💃</div>
+  </div>
 
   <!-- ============ COUNTDOWN ============ -->
   <div id="countdown-view">
@@ -245,9 +595,42 @@
     <div id="sub">Hold on... the fridge is doing its best 🧊</div>
   </div>
 
-  <!-- ============ PARTY ============ -->
+  <!-- ============ PARTY: THE CLUB ============ -->
   <div id="party-view">
-    <div id="beer-time-text">🍺 BEER TIME 🍺</div>
+    <div id="dance-floor"></div>
+    <div id="club-wash"></div>
+
+    <div class="laser from-left l1"></div>
+    <div class="laser from-left l2"></div>
+    <div class="laser from-left l3"></div>
+    <div class="laser from-right l4"></div>
+    <div class="laser from-right l5"></div>
+
+    <div class="ball-pos" id="big-ball-pos">
+      <div class="ball-rig">
+        <div class="ball-rays"></div>
+        <div class="ball-string"></div>
+        <div class="ball-emoji">🪩</div>
+        <span class="glint" style="top: 7vh; left: -18px; animation-delay: 0s;">✨</span>
+        <span class="glint" style="top: 9vh; right: -20px; animation-delay: 0.4s;">✨</span>
+        <span class="glint" style="top: calc(7vh + 5.5rem); left: -12px; animation-delay: 0.9s;">✨</span>
+        <span class="glint" style="top: calc(7vh + 6rem); right: -14px; animation-delay: 1.3s;">✨</span>
+      </div>
+    </div>
+
+    <div id="dj-booth">
+      <div class="speaker left"><i></i><i></i></div>
+      <div class="speaker right"><i></i><i></i></div>
+      <div id="untz">UNTZ UNTZ UNTZ</div>
+      <div id="dj">🧍<span id="dj-phones">🎧</span></div>
+      <div id="booth-front">
+        <span class="deck">💿</span>
+        <span id="dj-name">DJ FREDAG</span>
+        <span class="deck">💿</span>
+      </div>
+    </div>
+
+    <div id="beer-time-text"><span class="btt-spin"><span class="btt-sway">🍺 BEER TIME 🍺</span></span></div>
     <div id="cheers-sub">SKÅL! CHEERS! PROST! 🎉</div>
   </div>
 
@@ -279,6 +662,8 @@
     'Hydrate now, celebrate later 💧',
     'Somewhere, a keg is getting nervous 🛢️',
     'Beer thirty is almost upon us ⏰',
+    'The DJ is warming up the decks 💿',
+    'Disco ball: polished and ready 🪩',
   ];
   let subIdx = 0;
   setInterval(() => {
@@ -334,8 +719,8 @@
     document.title = '🍻🍻🍻 BEER TIME 🍻🍻🍻';
     const party = document.getElementById('party-view');
 
-    // Flying beer mugs across the screen
-    const flyers = ['🍺', '🍻', '🍺', '🍻', '🥂', '🍺', '🍾', '🍺'];
+    // Flying beers, vinyls and fireworks across the screen
+    const flyers = ['🍺', '🍻', '🍺', '💿', '🥂', '🍺', '🎆', '🍻'];
     for (let i = 0; i < 16; i++) {
       const el = document.createElement('div');
       el.className = 'flying-beer' + (i % 2 ? ' reverse' : '');
@@ -347,20 +732,77 @@
       party.appendChild(el);
     }
 
-    // Bouncing party guests at the bottom
-    const bouncers = ['🕺', '💃', '🎉', '🥳', '🦆', '🍕', '🎸', '🪩'];
-    bouncers.forEach((e, i) => {
+    // The crowd: back row (small, in shadow) + front row (big)
+    const crowd = ['🕺', '💃', '🥳', '🙆‍♂️', '💁‍♀️', '🦆', '🍕', '🎸'];
+    const dances = ['danceBounce', 'danceSpin', 'danceJump', 'danceShuffle'];
+    const spawnRow = (count, cls, startVw, stepVw) => {
+      for (let i = 0; i < count; i++) {
+        const el = document.createElement('div');
+        el.className = 'dancer ' + cls;
+        el.textContent = crowd[Math.floor(Math.random() * crowd.length)];
+        el.style.left = (startVw + i * stepVw + Math.random() * 4) + 'vw';
+        el.style.animation = `${dances[Math.floor(Math.random() * dances.length)]} ` +
+          `${(0.6 + Math.random() * 0.9).toFixed(2)}s ease-in-out infinite`;
+        el.style.animationDelay = (-Math.random() * 2).toFixed(2) + 's';
+        party.appendChild(el);
+      }
+    };
+    spawnRow(10, 'back', 2, 10);
+    spawnRow(8, 'front', 3, 12);
+
+    // Beer raining from the sky
+    for (let i = 0; i < 24; i++) {
       const el = document.createElement('div');
-      el.className = 'bouncer';
-      el.textContent = e;
-      el.style.left = (5 + i * 12) + 'vw';
-      el.style.animationDuration = (1.2 + Math.random() * 1.2) + 's';
-      el.style.animationDelay = (-Math.random() * 2) + 's';
+      el.className = 'beer-rain';
+      el.textContent = i % 3 ? '🍺' : '🍻';
+      el.style.left = Math.random() * 96 + 'vw';
+      el.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
+      el.style.animationDuration = (1.8 + Math.random() * 2.5) + 's';
+      el.style.animationDelay = (-Math.random() * 4) + 's';
       party.appendChild(el);
-    });
+    }
+
+    // Champagne cannons: 45° tilted bottles fly in from both sides and spray
+    const spawnChampagne = (side, topVh, delaySec) => {
+      const track = document.createElement('div');
+      track.className = 'champ-track ' + side;
+      track.style.top = topVh + 'vh';
+      track.style.animationDuration = (6 + Math.random() * 3) + 's';
+      track.style.animationDelay = delaySec + 's';
+
+      const flip = document.createElement('span');
+      flip.className = 'champ-flip';
+      const bottle = document.createElement('span');
+      bottle.className = 'champ-bottle';
+      bottle.textContent = '🍾';
+      const spray = document.createElement('span');
+      spray.className = 'champ-spray';
+
+      for (let i = 0; i < 10; i++) {
+        const drop = document.createElement('span');
+        const fizz = i % 3 === 0;
+        drop.className = 'champ-drop' + (fizz ? ' fizz' : '');
+        if (fizz) drop.textContent = i % 2 ? '🫧' : '✨';
+        // spray up-right along the bottle's 45° axis (mirrored automatically on the right)
+        drop.style.setProperty('--dx', (4 + Math.random() * 14).toFixed(1) + 'vw');
+        drop.style.setProperty('--dy', -(2 + Math.random() * 12).toFixed(1) + 'vh');
+        drop.style.animationDuration = (0.6 + Math.random() * 0.8).toFixed(2) + 's';
+        drop.style.animationDelay = (-Math.random() * 1.5).toFixed(2) + 's';
+        spray.appendChild(drop);
+      }
+
+      flip.appendChild(bottle);
+      flip.appendChild(spray);
+      track.appendChild(flip);
+      party.appendChild(track);
+    };
+    spawnChampagne('left', 18, 0);
+    spawnChampagne('left', 55, -3.5);
+    spawnChampagne('right', 28, -1.5);
+    spawnChampagne('right', 62, -5);
 
     // Confetti rain
-    const colors = ['#fff', '#f75c4c', '#1a2a6c', '#2ec4b6', '#ffd166', '#9b5de5'];
+    const colors = ['#fff', '#f75c4c', '#ff2bd6', '#2ec4b6', '#ffd166', '#9b5de5'];
     for (let i = 0; i < 80; i++) {
       const el = document.createElement('div');
       el.className = 'confetti';
