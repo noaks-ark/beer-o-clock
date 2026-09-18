@@ -1,0 +1,28 @@
+{
+  "name": "beer-o-clock",
+  "version": "2.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noaks-ark/beer-o-clock.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/noaks-ark/beer-o-clock/issues"
+  },
+  "homepage": "https://github.com/noaks-ark/beer-o-clock#readme",
+  "description": "Countdown to beer time, in WebGL",
+  "dependencies": {
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.0"
+  },
+  "type": "module"
+}
