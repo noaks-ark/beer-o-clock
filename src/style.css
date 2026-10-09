@@ -88,13 +88,6 @@ body.party #clockline { display: none; }
 }
 #sub.swap { opacity: 0; }
 
-#hint {
-  font-family: ui-monospace, Menlo, monospace;
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.4);
-}
-body.party #hint { opacity: 0; }
-
 /* speech bubbles projected from the 3D figures */
 #bubbles { position: fixed; inset: 0; pointer-events: none; z-index: 6; }
 .bubble {

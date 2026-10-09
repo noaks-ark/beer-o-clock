@@ -17,14 +17,6 @@ python3 -m http.server 8000
 # then open http://localhost:8000/
 ```
 
-## URL parameters
-
-| Param | Effect |
-|---|---|
-| `?test=10` | Ten second countdown, for demos |
-| `?party=1` | Skip straight to the party |
-| `?off=a,b` | Disable effects by name: `rain`, `steins`, `explode`, `bloom`, `shadows` |
-
 Click the townsfolk to make them talk. During the party, clicking the ground
 spills beer.
 

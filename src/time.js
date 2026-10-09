@@ -4,16 +4,25 @@ export const TARGET_HOUR = 15;
 // The "day of waiting" used to ramp the floor colour: 09:00 -> 15:00.
 export const FILL_WINDOW_MS = 6 * 3600 * 1000;
 
+/** True when the page is served from this machine, not the public site. */
+export function isLocalHost(loc = location) {
+  const h = loc.hostname;
+  return loc.protocol === 'file:' || h === 'localhost' || h === '127.0.0.1' || h === '::1' || h === '[::1]' || h.endsWith('.local');
+}
+
 /**
- * Reads URL params and computes the target timestamp.
- *  ?test=N   N-second countdown for demos
+ * Computes the target timestamp: today at 15:00 in the browser's local time.
+ * If that is already in the past the page stays in party mode for the rest of
+ * the day (no rollover).
+ *
+ * Debug URL params are honoured only on a local host, never on the public
+ * site, and must not be advertised in the UI or docs:
+ *  ?test=N   N-second countdown
  *  ?party=1  skip straight to the party
- *  ?off=a,b  disable effects by name (after, rgb, glitch, strobe, explode, rain, pulse, whip, hue), for tuning
- * Otherwise: today at 15:00 in the browser's local time. If that is already in
- * the past the page stays in party mode for the rest of the day (no rollover).
+ *  ?off=a,b  disable effects by name (rain, steins, explode, bloom, shadows)
  */
-export function getConfig(search = location.search, now = Date.now()) {
-  const params = new URLSearchParams(search);
+export function getConfig(search = location.search, now = Date.now(), local = isLocalHost()) {
+  const params = new URLSearchParams(local ? search : '');
   const testSecs = parseInt(params.get('test') ?? '', 10);
   const forceParty = params.get('party') === '1';
   const off = new Set((params.get('off') ?? '').split(',').filter(Boolean));
